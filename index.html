@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-touch-fullscreen" content="yes" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="renderer" content="webkit" />
+		<title>VISA 秒刷卡</title>
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/common.css" />
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<style>
+			.game {
+				background-image: url(img/bg.jpg);
+				background-size: 100% 100%;
+				padding: 2rem 5% 0 5%;
+				height: 97vh;
+			}
+			
+			.visa-title {
+				display: flex;
+				justify-content: space-between;
+			}
+			
+			.visa-title-text {
+				border: 2px dashed #eeaa3a;
+				color: #fff;
+				padding: 0rem .4rem 0rem .4rem;
+				font-size: 1.5rem;
+			}
+			
+			.visa-game-title {
+				font-size: 2rem;
+				color: #fff;
+				margin-top: 2rem;
+			}
+			
+			.visa-game-content {
+				display: flex;
+				justify-content: space-between;
+				flex-wrap: wrap;
+			}
+			
+			.start {
+				background-size: 100% 100%;
+				background-image: url(img/start.jpg);
+				position: relative;
+			}
+			
+			.start button {
+				padding: 1rem 2rem 1rem 2rem;
+				color: #FFFFFF;
+				font-size: 1.5rem;
+				border: 2px solid #6cc8e1;
+				background-color: rgba(255, 255, 255, .2);
+				border-radius: 5rem;
+				position: absolute;
+				top: 60%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.start img {
+				width: 50%;
+				position: absolute;
+				top: 20%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			/*
+			 * 翻牌
+			 */
+			
+			.flip_wrap {
+				width: 48%;
+				margin: 0 auto;
+				perspective: 800px;
+				/*perspective属性定义3D元素距视图的距离,以像素计。该属性允许您改变 3D 元素查看 3D 元素的视图。*/
+				-webkit-perspective: 800px;
+				-moz-perspective: 800px;
+				-ms-perspective: 800px;
+				-o-perspective: 800px;
+				margin-top: 2rem;
+			}
+			
+			.flip {
+				backface-visibility: hidden;
+				/*背对屏幕时隐藏*/
+				-webkit-backface-visibility: hidden;
+				-moz-backface-visibility: hidden;
+				-ms-backface-visibility: hidden;
+				-o-backface-visibility: hidden;
+				width: 100%;
+				transition: all .5s ease;
+				/*为翻牌添加过渡效果*/
+				-webkit-transition: all .5s ease;
+				-moz-transition: all .5s ease;
+				-ms-transition: all .5s ease;
+				-o-transition: all .5s ease;
+				transform-style: preserve-3d;
+				/*子元素将保留其 3D 位置。*/
+			}
+			
+			.side {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				/*让背面和正面重叠*/
+			}
+			
+			.back {
+				transform: rotateY(180deg);
+				-webkit-transform: rotateY(180deg);
+				-moz-transform: rotateY(180deg);
+				-ms-transform: rotateY(180deg);
+				-o-transform: rotateY(180deg);
+			}
+			
+			.open {
+				transform: rotateY(180deg);
+				-webkit-transform: rotateY(180deg);
+				-moz-transform: rotateY(180deg);
+				-ms-transform: rotateY(180deg);
+				-o-transform: rotateY(180deg);
+			}
+		</style>
+	</head>
+
+	<body>
+		<center class="start" id="start">
+			<img src="img/logo.png" />
+			<button onclick="start()">开始游戏</button>
+		</center>
+		<center class="dis-none game" id="game">
+			<div class="visa-title">
+				<div class="visa-title-text">
+					时间: <span id="timer">0</span>s
+				</div>
+				<div class="visa-title-text">
+					VISA卡:0/20
+				</div>
+				<div class="visa-title-text">
+					音乐
+				</div>
+			</div>
+			<div class="visa-game">
+				<div class="visa-game-title">
+					<p>请点击相同卡面</p>
+				</div>
+				<div class="visa-game-content">
+					<section class="flip_wrap" id="card_1">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_1" data-sign="1" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/1.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_2">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_2" data-sign="2" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/2.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_3">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_3" data-sign="3" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/3.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_4">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_4" data-sign="1" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/4.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_5">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_5" data-sign="4" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/5.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_6">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_6" data-sign="2" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/6.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_7">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_7" data-sign="3" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/3.png">
+							</div>
+						</div>
+					</section>
+
+					<section class="flip_wrap" id="card_8">
+						<!-- 大容器 -->
+						<div class="flip" id="sign_8" data-sign="4" data-click="false">
+							<!-- 实现翻牌容器 -->
+							<div class="side">
+								<!-- 牌背面 -->
+								<img src="img/card/common.jpg">
+							</div>
+							<div class="side back">
+								<!-- 牌正面 -->
+								<img src="img/card/5.png">
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+			<div class="pop wh" id='loadBox'>
+				<div class="mask"></div>
+			</div>
+			<div class="pop wh dis-none" id='roateBox'>
+				<div class="maskAll">
+					<div class="roate"></div>
+					<div style="color:#fff;position:relative;z-index:300;text-align:center;margin-top:3rem">
+						为了更好的体验请使用竖屏查看
+						<p style="opacity: .8;font-size: .8rem;">For a better experience, use the vertical screen to view</p>
+					</div>
+				</div>
+			</div>
+	</body>
+	<script type="text/javascript" src="js/loading.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<script>
+		$(function() {
+			$('#start').height($(window).height());
+			hideLoading();
+		});
+
+		var clickFlag = false;
+		var clickTime = 0;
+		var clickScu = [];
+
+		function start() {
+			startTime();
+			$('#start').fadeOut();
+			$('#game').fadeIn();
+			$('section').height($('section').width() / 5 * 3);
+		}
+		$('section').click(function(e) {
+			if(clickFlag == false) {
+				clickTime++;
+				$('#' + this.id + ' .flip').addClass('open');
+
+			}
+			if(clickTime == 2) {
+				clickFlag = true;
+				var _tempIdOne = $('.open[data-click=false]')[0].id;
+				var _tempIdTwo = $('.open[data-click=false]')[1].id;
+				var _tempSignOne = $('.open[data-click=false]')[0].dataset.sign;
+				var _tempSignTwo = $('.open[data-click=false]')[1].dataset.sign;
+				console.log(_tempIdOne, _tempIdTwo, _tempSignOne, _tempSignTwo);
+				if(_tempSignOne != _tempSignTwo) {
+					setTimeout(function() {
+						$('#' + _tempIdOne).removeClass('open');
+						$('#' + _tempIdTwo).removeClass('open');
+						clickFlag = false;
+					}, 1000)
+				} else {
+					$('#' + _tempIdOne)[0].dataset.click = 'true';
+					$('#' + _tempIdTwo)[0].dataset.click = 'true';
+					clickScu.push(_tempIdOne);
+					clickScu.push(_tempIdTwo);
+					clickFlag = false;
+
+					if(clickScu.length == 8) {
+						stopTime();
+						setTimeout(function() {
+							alert('恭喜您过关啦,总计用时' + $('#timer').html() + '秒!');
+						}, 1000)
+
+					}
+				}
+				clickTime = 0;
+			}
+		})
+	</script>
+
+</html>
